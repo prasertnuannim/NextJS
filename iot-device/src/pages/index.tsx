@@ -6,7 +6,7 @@ const Index = () => {
 
   useEffect(() => {
     // Redirect to /login
-    router.push('/iotDevices');
+    router.push('/users');
   }, [router]);
 
   return null; // or a loading indicator if you prefer
