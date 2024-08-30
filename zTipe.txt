@@ -1,1 +1,19 @@
 sudo npx prisma migrate dev --name "name"
+
+sudo npx prisma migrate dev --name "add relation role" --create-only //required column `roleId` to the `Users` table without a default value.
+
+import { NextApiRequest, NextApiResponse } from "next";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+export default async function handler(
+req: NextApiRequest,
+res: NextApiResponse,
+) {
+if (req.method === "GET") {
+} else if (req.method === "POST"){
+} else if (req.method === "PUT") {
+} else if (req.method === "DELETE") {
+}else {
+return res.status(405).json({ error: "Method not allowed" });
+}
+}

@@ -1,24 +1,51 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { type NextRequest } from "next/server";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
+
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse,
-  request: NextRequest
+  res: NextApiResponse
+  // request: NextRequest
 ) {
   if (req.method === "GET") {
-    // const searchParams = request.nextUrl.searchParams;
-    // const search = searchParams.get("search") || "";
-    // const role = searchParams.get("role");
-    // const sort = searchParams.get("sort") || 'desc';
+    const { search, role, sort } = req.query;
 
-    console.log(request)
+    let queryOptions: any = {
+      orderBy: {
+        createdAt: sort as "asc" | "desc",
+      },
+    };
+
+    if (role || search) {
+      queryOptions.where = {
+        ...(role && { role }),
+        OR: search
+          ? [
+              {
+                name: {
+                  contains: String(search),
+                  mode: "insensitive",
+                },
+              },
+              {
+                email: {
+                  contains: String(search),
+                  mode: "insensitive",
+                },
+              },
+            ]
+          : undefined,
+      };
+    }
+
     try {
-      const users = await prisma.users.findMany();
+      const users = await prisma.users.findMany(queryOptions);
+
       return res.status(200).json(users);
     } catch (error) {
       return res.status(500).json({ error: "Error fetching users" });
