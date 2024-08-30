@@ -11,7 +11,13 @@ export default async function handler(
 ) {
   
   if (req.method === "GET") {
-    
+    try {
+      const roles = await prisma.roles.findMany();
+      return res.status(200).json(roles); 
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Error fetching roles" });
+    }
   } else if (req.method === "POST") {
     try {
      const { name } = req.body;

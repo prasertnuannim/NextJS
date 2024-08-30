@@ -25,11 +25,11 @@ export default async function handler(
   } else if (req.method === "PUT") {
     try {
       const { id } = req.query;
-      const { name, email, password, role } = req.body;
+      const { name, email, password, roleId } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
       const updateUser = await prisma.users.update({
         where: { id: Number(id) },
-        data: { name, email, password: hashedPassword, role },
+        data: { name, email, password: hashedPassword, roleId: Number(roleId) },
       });
       return res.status(200).json(updateUser);
     } catch (error) {

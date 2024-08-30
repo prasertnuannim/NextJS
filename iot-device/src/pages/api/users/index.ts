@@ -23,7 +23,7 @@ export default async function handler(
 
     if (role || search) {
       queryOptions.where = {
-        ...(role && { role }),
+        ...(role && { role : { name: { equals: String(role) } } }),
         OR: search
           ? [
               {
@@ -44,7 +44,7 @@ export default async function handler(
     }
 
     try {
-      const users = await prisma.users.findMany(queryOptions);
+      const users = await prisma.users.findMany({...queryOptions, include: {role: true}});
 
       return res.status(200).json(users);
     } catch (error) {
@@ -52,10 +52,10 @@ export default async function handler(
     }
   } else if (req.method === "POST") {
     try {
-      const { name, email, password, role } = req.body;
+      const { name, email, password, roleId } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = await prisma.users.create({
-        data: { name, email, password: hashedPassword, role },
+        data: { name, email, password: hashedPassword, roleId: Number(roleId) },
       });
       return res.status(200).json(newUser);
     } catch (error) {

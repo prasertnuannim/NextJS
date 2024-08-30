@@ -8,10 +8,12 @@ const Users = () => {
   const [users, setPosts] = useState([])
   const [search, setSearch] = useState('')
   const [role, setRole] = useState('')
+  const [roles, setRoles] = useState([])
   const [sort, setSort] = useState('desc')
 
   useEffect(() => {
     fetchPosts()
+    fetchRoles()
   }, [])
 
   const fetchPosts = async () => {
@@ -24,6 +26,14 @@ const Users = () => {
     }
   }
 
+  const fetchRoles = async () => {
+    try {
+      const res = await axios.get(`/api/roles`)
+      setRoles(res.data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
   const deletePost = async (id: Number) => {
     try {
       await axios.delete(`/api/users/${id}`)
@@ -55,9 +65,11 @@ const Users = () => {
             className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">Select Role</option>
-            <option value="USER">USER</option>
-            <option value="ADMIN">ADMIN</option>
-            <option value="">null</option>
+            {roles.map((role:any) => (
+              <option key={role.id} value={role.name}>
+                {role.name}
+              </option>
+            ))}
           </select>
           <select
             value={sort}
@@ -121,7 +133,7 @@ const Users = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">
-                    {user.role}
+                    {user.role.name}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
