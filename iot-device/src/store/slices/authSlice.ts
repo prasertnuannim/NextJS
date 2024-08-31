@@ -1,6 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "@/store/store";
 import httpClient from "@/utils/httpClient";
+import { signIn } from "next-auth/react";
 
 interface UserState {
   accessToken: string;
@@ -25,7 +26,7 @@ const initialState: UserState = {
 };
 
 interface LoginAction {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -44,11 +45,19 @@ export const loginUser = createAsyncThunk(
   "user/login",
   async (credential: LoginAction) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    const response = await httpClient.post(
-      `http://localhost:3001/auth/login`,
-      credential
-    );
-    return response.data;
+    // const response = await httpClient.post(
+    //   `http://localhost:3001/auth/login`,
+    //   credential
+    // );
+    // return response.data;
+    console.log("credential : ", credential);
+    const result = await signIn("credentials", {
+      username: credential.email,
+      password: credential.password,
+      redirect: false,
+    });
+    console.log("result : ", result);
+    return result;
   }
 );
 
@@ -115,12 +124,8 @@ const userSlice = createSlice({
 
       .addCase(loginUser.fulfilled, (state, action: PayloadAction<any>) => {
         state.statusLogin = "success";
-        state.user = action.payload.user;
-        // let expireTime = new Date(new Date().getTime() + 60 * 60 * 1000);
-        // Cookies.set("token", action.payload.token, {
-        //   expires: expireTime,
-        //   secure: true,
-        // });
+     //   state.user = action.payload.user;
+
       })
 
       .addCase(loginUser.rejected, (state, action: PayloadAction<any>) => {

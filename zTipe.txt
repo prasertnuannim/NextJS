@@ -2,6 +2,8 @@ sudo npx prisma migrate dev --name "name"
 
 sudo npx prisma migrate dev --name "add relation role" --create-only //required column `roleId` to the `Users` table without a default value.
 
+docker-compose up -d
+
 import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();

@@ -6,7 +6,7 @@ const Index = () => {
 
   useEffect(() => {
     // Redirect to /login
-    router.push('/users');
+    router.push('/login');
   }, [router]);
 
   return null; // or a loading indicator if you prefer

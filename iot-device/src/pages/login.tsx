@@ -10,7 +10,7 @@ import { loginUser } from "../store/slices/authSlice";
 import { useRouter } from "next/router";
 
 interface IFormInput {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -20,7 +20,7 @@ export default function Login() {
 
   const { statusLogin } = useSelector((state: RootState) => state.auth);
   const loginSchema = Yup.object().shape({
-    username: Yup.string().required("Username is required"),
+    email: Yup.string().required("Email is required"),
     password: Yup.string()
       .required("Password is required")
       .min(4, "Password must be at least 4 characters"),
@@ -33,19 +33,19 @@ export default function Login() {
   } = useForm<IFormInput>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
-      username: "",
-      password: "",
+      email: "sert@test.com",
+      password: "1234",
     },
   });
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    const { username, password } = data;
-    dispatch(loginUser({ username, password }));
+    const { email, password } = data;
+    dispatch(loginUser({ email, password }));
   };
 
   useEffect(() => {
     if (statusLogin === "success") {
-      router.push("/iotDevices");
+    //  router.push("/iotDevices");
     }
   }, [statusLogin]);
 
@@ -62,7 +62,7 @@ export default function Login() {
           <div className="flex border-b-black border-b-2 mx-5  py-1">
             <input
               type="text"
-              {...register("username")}
+              {...register("email")}
               className="w-11/12 bg-transparent outline-none placeholder-black"
               placeholder="Enter Your Name"
             />
@@ -70,8 +70,8 @@ export default function Login() {
               <FaUser className="text-xl" />
             </div>
           </div>
-          {errors.username && (
-            <p className="text-white mx-5">{errors.username.message}</p>
+          {errors.email && (
+            <p className="text-white mx-5">{errors.email.message}</p>
           )}
 
           <div className="flex border-b-black border-b-2 mx-5 mt-5 py-1">
