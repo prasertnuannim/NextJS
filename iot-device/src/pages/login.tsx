@@ -8,6 +8,7 @@ import { RootState, useAppDispatch } from "../store/store";
 import { useSelector } from "react-redux";
 import { loginUser } from "../store/slices/authSlice";
 import { useRouter } from "next/router";
+import { signIn, useSession } from "next-auth/react";
 
 interface IFormInput {
   email: string;
@@ -38,16 +39,26 @@ export default function Login() {
     },
   });
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    
     const { email, password } = data;
-    dispatch(loginUser({ email, password }));
+    try {
+      const result:any = await signIn('credentials', {
+        redirect: false,
+        email,
+        password,
+      })
+
+      // if (result.error) {
+      //   console.error(result.error)
+      // } else {
+      //   router.push('/users')
+      // }
+    } catch (error) {
+      console.log('error', error)
+    }
   };
 
-  useEffect(() => {
-    if (statusLogin === "success") {
-    //  router.push("/iotDevices");
-    }
-  }, [statusLogin]);
 
   return (
     <div

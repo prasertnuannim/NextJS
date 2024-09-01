@@ -52,6 +52,7 @@ export const loginUser = createAsyncThunk(
     // return response.data;
     console.log("credential : ", credential);
     const result = await signIn("credentials", {
+      
       username: credential.email,
       password: credential.password,
       redirect: false,

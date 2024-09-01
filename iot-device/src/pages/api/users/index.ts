@@ -52,10 +52,10 @@ export default async function handler(
     }
   } else if (req.method === "POST") {
     try {
-      const { name, email, password, roleId } = req.body;
+      const { name, email, password } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = await prisma.users.create({
-        data: { name, email, password: hashedPassword, roleId: Number(roleId) },
+        data: { name, email, password: hashedPassword },
       });
       return res.status(200).json(newUser);
     } catch (error) {

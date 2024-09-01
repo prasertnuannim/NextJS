@@ -16,24 +16,25 @@ export const authOptions: AuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "john@doe.com" },
+        email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials): Promise<any> {
         if (!credentials) return null;
-        console.log("credentials : ", credentials);
         const user = await prisma.users.findUnique({
-          where: { email: credentials.email },
+          where: {
+            email: credentials.email,
+          },
         });
-        console.log("user : ", user);
         if (
           user &&
-          (await bcrypt.compare(credentials.password, user.password))
+          (await bcrypt.compare(credentials.password, user.password as string))
         ) {
           return {
             id: user.id,
             name: user.name,
             email: user.email,
+            role: user.roleId,
           };
         } else {
           throw new Error("Invalid email or password");
@@ -49,12 +50,14 @@ export const authOptions: AuthOptions = {
     jwt: async ({ token, user }) => {
       if (user) {
         token.id = user.id;
+        token.role = user.role as string;
       }
       return token;
     },
     session: async ({ session, token }: any) => {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.role = token.roleId as string;
       }
       return session;
     },
